@@ -1,0 +1,76 @@
+/* 
+  Smart Attendance System - CSS Styles
+  Premium, Modern, and Responsive Design
+*/
+
+:root {
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --bg-sidebar: #1E293B;
+    --bg-body: #F8FAFC;
+    --text-dark: #1E293B;
+    --text-light: #64748B;
+    --white: #FFFFFF;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+    min-height: 100vh;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    color: white;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    margin-left: 260px; /* Offset for Sidebar */
+    flex: 1;
+    padding: 2.5rem;
+    min-height: 100vh;
+}
+
+/* Add custom animations here if needed */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Table Enhancements */
+table tr:hover {
+    background-color: #F8FAFC;
+}
+
+/* Button Micro-interactions */
+.btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:active {
+    transform: scale(0.96);
+}

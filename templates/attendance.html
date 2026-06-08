@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Real-time Attendance Tracking{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <div class="card">
+        <div class="card-header">
+            <h3 style="font-weight: 600;">Webcam Stream</h3>
+            <div id="status-badge" class="badge badge-warning">Camera: {% if camera_active %}Active{% else %}Not Started{% endif %}</div>
+        </div>
+
+        <div style="position: relative; background: #000; border-radius: 0.75rem; overflow: hidden; height: 500px; display: flex; align-items: center; justify-content: center;">
+            {% if camera_active %}
+                <img src="{{ url_for('video_feed') }}" width="100%" height="100%" style="object-fit: contain;">
+            {% else %}
+                <div id="placeholder-text" style="color: white; text-align: center; padding: 2rem;">
+                    <i class="fas fa-video-slash" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <p>Webcam is currently disabled. Click "Start Camera" below to begin recognition.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
+            {% if not camera_active %}
+                <a href="{{ url_for('start_camera') }}" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="fas fa-play"></i> Start Camera
+                </a>
+            {% else %}
+                <a href="{{ url_for('stop_camera') }}" class="btn btn-danger" style="background-color: var(--danger); color: white; padding: 0.8rem 2rem;">
+                    <i class="fas fa-stop"></i> Stop Camera
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 style="font-weight: 600;">System Info</h3>
+        </div>
+        <div style="padding: 1rem;">
+            <p style="color: var(--text-light); margin-bottom: 1rem;">The backend is processing the video stream in real-time. Recognized faces will be marked with a <span style="color:#10B981; font-weight:600;">green box</span> and recorded automatically.</p>
+            <div style="background: #F8FAFC; padding: 1rem; border-radius: 0.5rem; border: 1px solid #E2E8F0;">
+                <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">Instructions:</h4>
+                <ul style="font-size: 0.85rem; color: var(--text-light); padding-left: 1.25rem;">
+                    <li>Ensure good lighting on the face.</li>
+                    <li>Look directly at the camera.</li>
+                    <li>The system will mark attendance once per day.</li>
+                </ul>
+            </div>
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="{{ url_for('list_records') }}" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-list-ul"></i> View Attendance Logs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logic handled server-side via MJPEG stream
+</script>
+{% endblock %}

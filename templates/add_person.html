@@ -1,0 +1,203 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Register New Person{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-weight: 600;">Person Details</h3>
+        <a href="{{ url_for('list_persons') }}" style="color: var(--text-light); text-decoration: none; font-size: 0.9rem;">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <form action="{{ url_for('add_person') }}" method="POST" enctype="multipart/form-data">
+        <div style="margin-bottom: 1.5rem;">
+            <label for="student_id" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">ID / National ID</label>
+            <input type="text" id="student_id" name="student_id" placeholder="E.g. 2024001 or National ID" 
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none;" required>
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="full_name" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Full Name</label>
+            <input type="text" id="full_name" name="full_name" placeholder="E.g. John Doe" 
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none;" required>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label for="role" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Role</label>
+            <select id="role" name="role" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none; background: white;" required>
+                <option value="Student">Student</option>
+                <option value="Doctor">Doctor</option>
+                <option value="Teaching Assistant">Teaching Assistant</option>
+                <option value="Staff">Other Staff</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label for="level" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Level / Department</label>
+            <input type="text" id="level" name="level" placeholder="E.g. Level 4" 
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none;" required>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Front Face Image</label>
+            
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button type="button" id="btn-upload-mode" class="btn" style="flex: 1; background: #3B82F6; color: white; border: none; padding: 0.5rem; border-radius: 0.4rem; cursor: pointer;">
+                    <i class="fas fa-upload"></i> Upload File
+                </button>
+                <button type="button" id="btn-camera-mode" class="btn" style="flex: 1; background: #E2E8F0; color: #475569; border: none; padding: 0.5rem; border-radius: 0.4rem; cursor: pointer;">
+                    <i class="fas fa-camera"></i> Use Camera
+                </button>
+            </div>
+
+            <!-- Upload Section -->
+            <div id="upload-section" style="border: 2px dashed #CBD5E1; border-radius: 0.75rem; padding: 2rem; text-align: center; background: #F8FAFC; cursor: pointer; position: relative;">
+                <input type="file" id="image" name="image" accept="image/*" 
+                       style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;"
+                       onchange="previewImage(this)">
+                <div id="preview-placeholder">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #94A3B8; margin-bottom: 1rem;"></i>
+                    <p style="color: #64748B;">Click to upload or drag and drop</p>
+                    <p style="font-size: 0.8rem; color: #94A3B8; margin-top: 0.5rem;">JPG, PNG (Clear face image recommended)</p>
+                </div>
+                <img id="image-preview" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 300px; border-radius: 0.5rem; margin: 0 auto;">
+            </div>
+
+            <!-- Camera Section -->
+            <div id="camera-section" style="display: none; text-align: center; border: 2px solid #E2E8F0; border-radius: 0.75rem; padding: 1rem; background: #F8FAFC;">
+                <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: 0.5rem; overflow: hidden; background: #000; line-height: 0;">
+                    <video id="video" width="100%" height="auto" autoplay playsinline style="transform: scaleX(-1);"></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
+                    <button type="button" id="capture-btn" class="btn" style="background: #10B981; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 0.4rem; cursor: pointer;">
+                        <i class="fas fa-camera"></i> Capture Photo
+                    </button>
+                    <button type="button" id="retake-btn" class="btn" style="display: none; background: #EF4444; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 0.4rem; cursor: pointer;">
+                        <i class="fas fa-redo"></i> Retake
+                    </button>
+                </div>
+                <div id="camera-preview-container" style="display: none; margin-top: 1rem;">
+                    <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 0.5rem;">Captured Preview:</p>
+                    <img id="captured-preview" style="max-width: 100%; max-height: 250px; border-radius: 0.5rem; border: 2px solid #10B981;">
+                </div>
+            </div>
+
+            <input type="hidden" name="captured_image" id="captured_image_input">
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 0.8rem;">
+                <i class="fas fa-save"></i> Save Registry
+            </button>
+            <a href="{{ url_for('list_persons') }}" class="btn" style="background: #E2E8F0; color: #475569; padding: 0.8rem; flex: 1; text-align: center; justify-content: center;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('image-preview');
+    const placeholder = document.getElementById('preview-placeholder');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Camera Logic
+const uploadSection = document.getElementById('upload-section');
+const cameraSection = document.getElementById('camera-section');
+const btnUploadMode = document.getElementById('btn-upload-mode');
+const btnCameraMode = document.getElementById('btn-camera-mode');
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const captureBtn = document.getElementById('capture-btn');
+const retakeBtn = document.getElementById('retake-btn');
+const capturedPreview = document.getElementById('captured-preview');
+const cameraPreviewContainer = document.getElementById('camera-preview-container');
+const capturedImageInput = document.getElementById('captured_image_input');
+const fileInput = document.getElementById('image');
+
+let stream = null;
+
+btnUploadMode.onclick = () => {
+    uploadSection.style.display = 'block';
+    cameraSection.style.display = 'none';
+    btnUploadMode.style.background = '#3B82F6';
+    btnUploadMode.style.color = 'white';
+    btnCameraMode.style.background = '#E2E8F0';
+    btnCameraMode.style.color = '#475569';
+    stopCamera();
+};
+
+btnCameraMode.onclick = async () => {
+    uploadSection.style.display = 'none';
+    cameraSection.style.display = 'block';
+    btnCameraMode.style.background = '#3B82F6';
+    btnCameraMode.style.color = 'white';
+    btnUploadMode.style.background = '#E2E8F0';
+    btnUploadMode.style.color = '#475569';
+    await startCamera();
+};
+
+async function startCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        cameraPreviewContainer.style.display = 'none';
+        captureBtn.style.display = 'inline-block';
+        retakeBtn.style.display = 'none';
+    } catch (err) {
+        console.error("Camera access error:", err);
+        alert("Could not access camera. Please make sure you have granted permission.");
+    }
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+}
+
+captureBtn.onclick = () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    // Mirror the capture to match the mirrored video preview
+    const ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    
+    const dataURL = canvas.toDataURL('image/jpeg');
+    capturedPreview.src = dataURL;
+    capturedImageInput.value = dataURL;
+    
+    video.style.display = 'none';
+    cameraPreviewContainer.style.display = 'block';
+    captureBtn.style.display = 'none';
+    retakeBtn.style.display = 'inline-block';
+    
+    // Clear file input
+    fileInput.value = "";
+};
+
+retakeBtn.onclick = () => {
+    video.style.display = 'block';
+    cameraPreviewContainer.style.display = 'none';
+    captureBtn.style.display = 'inline-block';
+    retakeBtn.style.display = 'none';
+    capturedImageInput.value = "";
+};
+</script>
+{% endblock %}

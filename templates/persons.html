@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Manage Registered Persons{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-weight: 600;">Registered Registry</h3>
+        <div style="display: flex; gap: 10px;">
+            <a href="{{ url_for('list_persons') }}" class="btn" style="background:#E0E7FF; color: var(--primary);">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </a>
+            <a href="{{ url_for('add_person') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Person
+            </a>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Face Image</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Level</th>
+                <th>Registered Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in persons %}
+            <tr>
+                <td>{{ person.student_id }}</td>
+                <td>
+                    <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid #E2E8F0;">
+                        {% if person.image_path %}
+                        <img src="{{ url_for('static', filename='uploads/persons/' + person.image_path) }}" 
+                             alt="{{ person.full_name }}" style="width:100%; height:100%; object-fit:cover;">
+                        {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#CBD5E1; color:white;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </td>
+                <td><strong>{{ person.full_name }}</strong></td>
+                <td><span class="badge" style="background: #F0FDF4; color: #16A34A; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500;">{{ person.role }}</span></td>
+                <td><span class="badge" style="background: #EEF2FF; color: var(--primary); padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem;">{{ person.level }}</span></td>
+                <td style="color: var(--text-light)">{{ person.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <form action="{{ url_for('delete_person', person_id=person.id) }}" method="POST" onsubmit="return confirm('Delete this person and their face data?')">
+                        <button type="submit" class="btn" style="background:#FEE2E2; color:#991B1B; padding: 0.4rem 0.8rem; font-size: 0.875rem;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-light);">
+                    <i class="fas fa-users-slash" style="font-size: 3rem; opacity: 0.2; margin-bottom: 1rem; display: block;"></i>
+                    No persons registered yet. Click "Add New Person" to start.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

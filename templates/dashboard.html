@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Stat Card: Students -->
+    <div class="card" style="display: flex; gap: 1rem; align-items: center; border-bottom: 4px solid var(--primary);">
+        <div style="background: rgba(99, 102, 241, 0.1); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem;">
+            <i class="fas fa-users-viewfinder"></i>
+        </div>
+        <div>
+            <p style="color: var(--text-light); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Registered Students</p>
+            <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a;">{{ stats.total_persons }}</h2>
+        </div>
+    </div>
+
+    <!-- Stat Card: Today -->
+    <div class="card" style="display: flex; gap: 1rem; align-items: center; border-bottom: 4px solid var(--success);">
+        <div style="background: rgba(16, 185, 129, 0.1); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--success); font-size: 1.5rem;">
+            <i class="fas fa-calendar-star"></i>
+        </div>
+        <div>
+            <p style="color: var(--text-light); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Today's Attendance</p>
+            <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a;">{{ stats.today_attendance }}</h2>
+        </div>
+    </div>
+
+    <!-- Stat Card: Total -->
+    <div class="card" style="display: flex; gap: 1rem; align-items: center; border-bottom: 4px solid var(--warning);">
+        <div style="background: rgba(245, 158, 11, 0.1); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--warning); font-size: 1.5rem;">
+            <i class="fas fa-database"></i>
+        </div>
+        <div>
+            <p style="color: var(--text-light); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Total Records</p>
+            <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a;">{{ stats.total_attendance }}</h2>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem;">
+    <!-- Smart Controls Area -->
+    <div class="card">
+        <h3 style="font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; color: var(--text-dark);">
+            <i class="fas fa-microchip" style="color: var(--primary);"></i> Smart Controls
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="{{ url_for('attendance_camera') }}" class="action-card" style="text-decoration: none; display: block; padding: 1.5rem; border-radius: 1rem; border: 1px solid #eef2f6; background: #fcfdfe; transition: 0.3s; text-align: center;">
+                <div style="width: 50px; height: 50px; background: rgba(99, 102, 241, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--primary);">
+                    <i class="fas fa-video" style="font-size: 1.25rem;"></i>
+                </div>
+                <p style="font-weight: 600; color: var(--text-dark);">Live Session</p>
+                <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">Start AI recognition</p>
+            </a>
+            <a href="{{ url_for('add_person') }}" class="action-card" style="text-decoration: none; display: block; padding: 1.5rem; border-radius: 1rem; border: 1px solid #eef2f6; background: #fcfdfe; transition: 0.3s; text-align: center;">
+                <div style="width: 50px; height: 50px; background: rgba(99, 102, 241, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--primary);">
+                    <i class="fas fa-plus" style="font-size: 1.25rem;"></i>
+                </div>
+                <p style="font-weight: 600; color: var(--text-dark);">New Entry</p>
+                <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">Register face data</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="card" style="background: var(--bg-sidebar); border: none;">
+        <h3 style="font-weight: 600; margin-bottom: 1.25rem; color: white;">Management</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 2rem; line-height: 1.6;">Access the database to review logs or export records to Excel for external reporting.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="{{ url_for('export_excel') }}" class="btn" style="background: var(--primary); color: white; width: 100%; justify-content: center; padding: 0.9rem; font-size: 0.9rem;">
+                <i class="fas fa-download"></i> Export Reports
+            </a>
+            <a href="{{ url_for('list_records') }}" class="btn" style="background: rgba(255,255,255,0.05); color: #cbd5e1; width: 100%; justify-content: center; font-size: 0.9rem;">
+                 Browse History
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .action-card:hover {
+        border-color: var(--primary) !important;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block page_title %}Attendance History Logs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-weight: 600;">System Logs</h3>
+        <form method="GET" action="{{ url_for('list_records') }}" style="display: flex; gap: 0.75rem; flex: 1; justify-content: flex-end;">
+            <div style="position: relative; max-width: 250px; flex: 1;">
+                <i class="fas fa-search" style="position: absolute; left: 0.75rem; top: 0.75rem; color: #9CA3AF;"></i>
+                <input type="text" name="name" placeholder="Search by name" value="{{ search_name }}" 
+                       style="width: 100%; padding: 0.6rem 0.6rem 0.6rem 2.25rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none; transition: 0.2s;">
+            </div>
+            <div style="position: relative;">
+                <input type="date" name="date" value="{{ filter_date }}" 
+                       style="padding: 0.6rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none;">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            <a href="{{ url_for('list_records') }}" class="btn" style="background:#E0E7FF; color: var(--primary);">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </a>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Person Name</th>
+                <th>Role</th>
+                <th>Level</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Recorded At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>#{{ record.student_id }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 30px; height: 30px; background: #EEF2FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 0.8rem;">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <strong>{{ record.person_name }}</strong>
+                    </div>
+                </td>
+                <td><span class="badge" style="background: #F0FDF4; color: #16A34A; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500;">{{ record.role }}</span></td>
+                <td><span class="badge" style="background: #F1F5F9; color: #475569; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem;">{{ record.level }}</span></td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.time }}</td>
+                <td><span class="badge badge-success" style="background: #D1FAE5; color: #065F46; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.8rem;">{{ record.status }}</span></td>
+                <td style="color: var(--text-light); font-size: 0.85rem;">{{ record.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <form action="{{ url_for('delete_record', record_id=record.id) }}" method="POST" onsubmit="return confirm('Delete this attendance record?')">
+                        <button type="submit" class="btn" style="background:#FEE2E2; color:#991B1B; padding: 0.4rem 0.8rem; font-size: 0.875rem;" title="Delete Record">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 3rem; color: var(--text-light);">
+                    <i class="fas fa-clipboard-list" style="font-size: 3rem; opacity: 0.2; margin-bottom: 1rem; display: block;"></i>
+                    No attendance records found for the applied filters.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+    <p style="color: var(--text-light); font-size: 0.9rem;">Showing {{ records|length }} results</p>
+    <a href="{{ url_for('export_excel') }}" class="btn" style="background: #10B981; color: white;">
+        <i class="fas fa-file-excel"></i> Export All to Excel
+    </a>
+</div>
+{% endblock %}
